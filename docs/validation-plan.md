@@ -21,9 +21,9 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 - [x] Review current upstream README, firmware, relay and commit history.
 - [x] Verify relevant Seeed/Espressif/Adafruit/Tailscale documentation.
 - [x] Record design direction, evidence, risks and known unknowns.
-- [ ] Read-back verification of all docs after final commit (record below).
+- [x] Read-back verification of all four documents from GitHub after initial commits (2026-11-14).
 
-**Result:** documentation only. No functional conclusions.
+**Result:** documentation files and commit history confirmed from GitHub (README, architecture, research baseline, validation plan). No functional conclusions.
 
 ### Checkpoint 1 — Isolated Funnel connectivity, without ESP32s
 
