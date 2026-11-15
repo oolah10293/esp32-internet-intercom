@@ -39,7 +39,7 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 
 **Pass principle:** no human intervention needed for recovery, audio-sized traffic is sustained, and latency/reconnect observations are acceptable for a press-to-talk voice device. Numeric acceptable thresholds to be agreed after preliminary measurement.
 
-**Status:** TEST HARNESS PREPARED; NOT RUN. The owner authorized the isolated Funnel/WebSocket test on 2026-11-14. Probe source at `tests/funnel_probe.py`; setup, security and cleanup instructions at `tests/README.md`. No Pi access, service installation, public Funnel exposure, or external measurement has yet occurred.
+**Status:** TEST HARNESS PREPARED; NOT RUN. The owner authorized the isolated Funnel/WebSocket test on 2026-11-14. Probe source at `tests/funnel_probe.py`; setup, security and cleanup instructions at `tests/README.md`. **Owner-supplied read-only Pi checks:** Tailscale 1.104.7 and Python 3.13.5; Serve uses 443 for a tailnet-only share; Pi-hole uses TCP 8443; no listener shown at TCP 10000 or 18765. Select **Funnel public HTTPS 10000**. No Pi access from assistant, service installation, public Funnel exposure, or external measurement has yet occurred.
 
 ### Checkpoint 2 — One-box local audio
 
@@ -96,6 +96,7 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 |---|---|---|---|---|---|
 | 2026-11-14 | 0 | GitHub + documentation websites | Read sources and establish docs | **SOURCE REVIEW ONLY; NO TESTS** | `README.md`, `docs/architecture.md`, `docs/research-baseline.md` |
 | 2026-11-14 | 1 (preparation) | GitHub source only | Created isolated authenticated WSS echo harness and Pi runbook | **UNTESTED CODE; NOT DEPLOYED** | `tests/funnel_probe.py`, `tests/README.md` |
+| 2026-11-14 | 1 (read-only checks) | Owner-reported Raspberry Pi terminal output | Examined Tailscale, port listeners and Python version | **8443 IN USE BY PI-HOLE; 10000 NOT SHOWN IN LISTENERS; NO FUNNEL TEST YET** | Owner terminal output in project chat |
 
 For future entries, include: source commit SHA, test commands/configuration, equipment and board revision, network topology, reproducible measurements, screenshots or logs if available, success/failure and outstanding defects. Do not mark success based only on source inspection.
 
@@ -112,4 +113,4 @@ For future entries, include: source commit SHA, test commands/configuration, equ
 
 ## Next suggested step
 
-**Current next step:** The owner has authorized Checkpoint 1's isolated test. First run the read-only checks in `tests/README.md` on the Raspberry Pi and confirm no 8443 conflict; then follow the controlled test procedure. No permission to build/flash firmware or to modify House Audio is implied.
+**Current next step:** The owner has authorized Checkpoint 1's isolated test. Read-only checks are supplied: 8443 is occupied by Pi-hole, so **use HTTPS 10000**, which had no listed listener. Next follow the isolated server and Funnel procedure in `tests/README.md`. No permission to build/flash firmware or to modify House Audio is implied.
