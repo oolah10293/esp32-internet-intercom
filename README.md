@@ -45,13 +45,15 @@ Do **not** import or republish upstream source merely because it is readable on 
 - [Architecture and hardware design](docs/architecture.md)
 - [Research and upstream source audit](docs/research-baseline.md)
 - [Validation plan and project checkpoints](docs/validation-plan.md)
+- [Funnel/WebSocket probe instructions](tests/README.md)
 
 ## Current status
 
 - **Verified from sources:** GitHub upstream code and official hardware/network documentation have been reviewed; details and URLs are logged in `docs/research-baseline.md`.
 - **Owner-reported, not independently checked on equipment:** Raspberry Pi runs Tailscale; existing hardware listed above.
 - **Not yet verified:** hardware wiring, ADC audio quality, amplifier operation, encrypted WebSocket behavior via Funnel, 24/7 reconnection, latency, and two-house operation.
-- **Not done:** no project code, firmware build, firmware flash, service deployment or live testing.
+- **Current test progress:** isolated WSS/Funnel probe script committed in `tests/funnel_probe.py` but untested; owner-supplied Pi port check selected Funnel HTTPS 10000 to avoid existing Pi-hole port 8443 and private Tailscale Serve on 443.
+- **Not done:** no intercom firmware/relay implementation, firmware build, firmware flash, service deployment or live WebSocket traffic testing.
 
 ## Change control
 
