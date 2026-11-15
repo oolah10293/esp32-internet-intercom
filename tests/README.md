@@ -3,6 +3,24 @@
 **Status: PROBE RUN ON OWNER'S PI, BROWSER WEBSOCKET ECHO TEST OBSERVED (2026-11-14).** Browser screenshot showed 5,131 640-byte frames sent and echoed, zero skipped sends, 70.6 ms mean echo round trip and normal close code 1000. External-ISP, endurance and recovery tests remain outstanding.  The owner supplied read-only Pi output on 2026-11-14: Tailscale 1.104.7, Python 3.13.5, existing tailnet-only Serve on 443, Pi-hole FTL bound to TCP 8443, and no reported listener on TCP 10000 or 18765. This runbook selects public HTTPS **10000** to avoid changing or colliding with either existing service.
 This is **not** an intercom implementation or firmware build. Authorization to perform this isolated test was given in chat on 2026-11-14. No Pi access is available from the assistant's connection; steps below must be run on the Pi by the owner.
 
+## Phone test without typing a token
+
+After the first successful desktop echo test, the owner requested a cellular test using a QR code rather than typing a long secret. The updated test server can print a QR **locally in the Pi terminal** (not in the public test page). It embeds the Funnel URL and a fresh one-time token in a URL fragment; the browser removes the fragment from its address bar before WebSocket authentication, and the fragment is not part of the HTTP request.
+
+Keep the existing Funnel terminal running. In the **Python probe terminal**, press Ctrl+C, then run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/oolah10293/esp32-internet-intercom/main/tests/funnel_probe.py -o ~/esp32-internet-intercom/tests/funnel_probe.py
+~/esp32-internet-intercom/.venv/bin/python -m pip install qrcode
+FUNNEL_PUBLIC_URL='https://pihole.tail9e5873.ts.net:10000/' ~/esp32-internet-intercom/.venv/bin/python ~/esp32-internet-intercom/tests/funnel_probe.py
+```
+
+The Pi prints a fresh test token and a QR in the terminal. **Do not share screenshots of the QR or the token.** On the phone, turn off Wi-Fi, disable Tailscale/VPN, scan the QR, and let the page connect. Click **Start traffic**, run it with the phone screen awake for about one minute, then **Stop traffic**. Record the sent/echoed counts, mean RTT and skipped sends. Browser timers may be throttled if the phone locks or the page is backgrounded. This tests genuine cellular routing, if cellular is active.
+
+If the QR is difficult to scan in the SSH terminal, maximize the terminal and adjust font size so the entire QR is visible. The QR is also invalidated when the Python test server is restarted, because the token changes.
+
+---
+
 ## What this exercises
 
 - A small Python/aiohttp server **bound only to 127.0.0.1:18765**.
@@ -20,7 +38,7 @@ Run in a Pi terminal:
 \`\`\`bash
 tailscale version
 tailscale funnel status
-sudo ss -ltnp | grep -E ':(443|10000|10000|18765)\b' || true
+sudo ss -ltnp | grep -E ':(443|8443|10000|18765)\b' || true
 python3 --version
 \`\`\`
 
@@ -71,7 +89,7 @@ If Tailscale prompts to enable Funnel/HTTPS in a web console, complete that requ
 
 Check in an external browser **from a different ISP** (for example, phone cellular with Wi-Fi off and no active Tailscale connection):
 
-1. Open the public HTTPS URL and enter the temporary token from the Pi terminal.
+1. Scan the QR shown in the Pi terminal with the phone's camera (preferred), or open the public HTTPS URL and paste the temporary token.
 2. Click Connect and observe successful WSS authentication.
 3. Click Start traffic for a short foreground-tab run; the intended send rate is **50 × 640 bytes/s = 256 kbit/s** raw payload.
 4. Observe echoed frames, RTT, skipped sends, and any disconnections.
