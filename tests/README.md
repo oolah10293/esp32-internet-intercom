@@ -1,6 +1,6 @@
 # Checkpoint 1: Tailscale Funnel / WebSocket test
 
-**Status: PROBE CODE COMMITTED, NOT RUN ON THE PI.** The owner supplied read-only Pi output on 2026-11-14: Tailscale 1.104.7, Python 3.13.5, existing tailnet-only Serve on 443, Pi-hole FTL bound to TCP 8443, and no reported listener on TCP 10000 or 18765. This runbook selects public HTTPS **10000** to avoid changing or colliding with either existing service.
+**Status: PROBE RUN ON OWNER'S PI, BROWSER WEBSOCKET ECHO TEST OBSERVED (2026-11-14).** Browser screenshot showed 5,131 640-byte frames sent and echoed, zero skipped sends, 70.6 ms mean echo round trip and normal close code 1000. External-ISP, endurance and recovery tests remain outstanding.  The owner supplied read-only Pi output on 2026-11-14: Tailscale 1.104.7, Python 3.13.5, existing tailnet-only Serve on 443, Pi-hole FTL bound to TCP 8443, and no reported listener on TCP 10000 or 18765. This runbook selects public HTTPS **10000** to avoid changing or colliding with either existing service.
 This is **not** an intercom implementation or firmware build. Authorization to perform this isolated test was given in chat on 2026-11-14. No Pi access is available from the assistant's connection; steps below must be run on the Pi by the owner.
 
 ## What this exercises
