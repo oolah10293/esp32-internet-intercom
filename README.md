@@ -52,7 +52,8 @@ Do **not** import or republish upstream source merely because it is readable on 
 - **Verified from sources:** GitHub upstream code and official hardware/network documentation have been reviewed; details and URLs are logged in `docs/research-baseline.md`.
 - **Owner-reported, not independently checked on equipment:** Raspberry Pi runs Tailscale; existing hardware listed above.
 - **Verified by owner-provided browser screenshot on 2026-11-14:** WSS echo traffic through public Funnel HTTPS 10000 completed 5,131 sent/5,131 echoed 640-byte frames, with zero reported send backpressure and a 70.6 ms mean echo round trip. This is one browser session, not an ESP32 or different-ISP test.
-- **Not yet verified:** hardware wiring, ADC audio quality, amplifier operation, continuous idle/reconnection reliability, real voice latency and two-house operation.
+- **Owner-confirmed independent-ISP result (2026-11-14):** Phone connected via cellular data with Wi-Fi and Tailscale disabled; screenshot shows 3,186 sent / 3,182 echoed at capture, 0 backpressure skips and 140.7 ms mean echo RTT over public Funnel HTTPS 10000. Four echo frames may have been in flight; no packet-loss measurement is established.
+- **Not yet verified:** hardware wiring, ADC audio quality, amplifier operation, continuous idle/reconnection reliability, real voice latency and complete two-box operation.
 - **Current test progress:** isolated WSS/Funnel probe in `tests/funnel_probe.py` was run on the owner's Pi and returned all frames echoed in the observed browser test. Funnel HTTPS 10000 avoids existing Pi-hole port 8443 and private Tailscale Serve on 443.
 - **Not done:** no intercom firmware/relay implementation, firmware build, firmware flash, service deployment or live WebSocket traffic testing.
 
