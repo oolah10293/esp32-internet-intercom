@@ -1,12 +1,12 @@
 # Checkpoint 1: Tailscale Funnel / WebSocket test
 
-**Status: PROBE CODE COMMITTED, NOT RUN ON THE PI.**
+**Status: PROBE CODE COMMITTED, NOT RUN ON THE PI.** The owner supplied read-only Pi output on 2026-11-14: Tailscale 1.104.7, Python 3.13.5, existing tailnet-only Serve on 443, Pi-hole FTL bound to TCP 8443, and no reported listener on TCP 10000 or 18765. This runbook selects public HTTPS **10000** to avoid changing or colliding with either existing service.
 This is **not** an intercom implementation or firmware build. Authorization to perform this isolated test was given in chat on 2026-11-14. No Pi access is available from the assistant's connection; steps below must be run on the Pi by the owner.
 
 ## What this exercises
 
 - A small Python/aiohttp server **bound only to 127.0.0.1:18765**.
-- An isolated Tailscale Funnel listener on **public HTTPS port 8443**.
+- An isolated Tailscale Funnel listener on **public HTTPS port 10000**.
 - A browser client via **WSS**: authenticates with an ephemeral random token, then sends a 640-byte binary frame every 20 ms and receives the same frame echoed.
 - The probe reports frame counts, round-trip time and browser send backpressure.
 - When traffic is stopped, the WebSocket remains open; aiohttp issues WebSocket heartbeats while idle.
@@ -20,11 +20,11 @@ Run in a Pi terminal:
 \`\`\`bash
 tailscale version
 tailscale funnel status
-sudo ss -ltnp | grep -E ':(443|8443|10000|18765)\b' || true
+sudo ss -ltnp | grep -E ':(443|10000|10000|18765)\b' || true
 python3 --version
 \`\`\`
 
-- Ensure **8443** is not already serving another Funnel/Serve configuration. Do not overwrite an existing listener.
+- Ensure **10000** remains free in the current output. Do not overwrite any existing listener. Pi-hole currently occupies **8443**, so never use 8443 here. Existing private Serve on **443** must remain private and unchanged.
 - If an existing port conflict or service is found, stop here and review before changing anything.
 - House Audio and its services are not to be changed.
 
@@ -64,10 +64,10 @@ Expected: HTTP response from the probe. If the port is busy, **do not** kill the
 **Pi terminal 2** (foreground, so it can be stopped with Ctrl+C):
 
 \`\`\`bash
-sudo tailscale funnel --https=8443 http://127.0.0.1:18765
+sudo tailscale funnel --https=10000 http://127.0.0.1:18765
 \`\`\`
 
-If Tailscale prompts to enable Funnel/HTTPS in a web console, complete that required first-run approval. Tailscale documents public DNS propagation delays up to around ten minutes. Use the exact HTTPS URL printed by the command, including \`:8443\` if present; do not guess the hostname.
+If Tailscale prompts to enable Funnel/HTTPS in a web console, complete that required first-run approval. Tailscale documents public DNS propagation delays up to around ten minutes. Use the exact HTTPS URL printed by the command, including \`:10000\` if present; do not guess the hostname.
 
 Check in an external browser **from a different ISP** (for example, phone cellular with Wi-Fi off and no active Tailscale connection):
 
@@ -88,10 +88,10 @@ Stop the Funnel foreground command with **Ctrl+C** in terminal 2. Check:
 tailscale funnel status
 \`\`\`
 
-If the test listener on 8443 remains published, remove only that endpoint (not all Funnel configuration):
+If the test listener on 10000 remains published, remove only that endpoint (not all Funnel configuration):
 
 \`\`\`bash
-sudo tailscale funnel --https=8443 off
+sudo tailscale funnel --https=10000 off
 \`\`\`
 
 In terminal 1, stop the local probe with **Ctrl+C**. Do **not** run \`tailscale funnel reset\`; that would erase unrelated Funnel configuration.
