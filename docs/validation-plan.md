@@ -39,7 +39,7 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 
 **Pass principle:** no human intervention needed for recovery, audio-sized traffic is sustained, and latency/reconnect observations are acceptable for a press-to-talk voice device. Numeric acceptable thresholds to be agreed after preliminary measurement.
 
-**Status:** NOT STARTED.
+**Status:** TEST HARNESS PREPARED; NOT RUN. The owner authorized the isolated Funnel/WebSocket test on 2026-11-14. Probe source at `tests/funnel_probe.py`; setup, security and cleanup instructions at `tests/README.md`. No Pi access, service installation, public Funnel exposure, or external measurement has yet occurred.
 
 ### Checkpoint 2 — One-box local audio
 
@@ -95,6 +95,7 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 | Date (UTC) | Checkpoint | Source / environment | Action | Result | Evidence |
 |---|---|---|---|---|---|
 | 2026-11-14 | 0 | GitHub + documentation websites | Read sources and establish docs | **SOURCE REVIEW ONLY; NO TESTS** | `README.md`, `docs/architecture.md`, `docs/research-baseline.md` |
+| 2026-11-14 | 1 (preparation) | GitHub source only | Created isolated authenticated WSS echo harness and Pi runbook | **UNTESTED CODE; NOT DEPLOYED** | `tests/funnel_probe.py`, `tests/README.md` |
 
 For future entries, include: source commit SHA, test commands/configuration, equipment and board revision, network topology, reproducible measurements, screenshots or logs if available, success/failure and outstanding defects. Do not mark success based only on source inspection.
 
@@ -111,4 +112,4 @@ For future entries, include: source commit SHA, test commands/configuration, equ
 
 ## Next suggested step
 
-**Once authorized:** Checkpoint 1, isolated Funnel WebSocket traffic/idle test on the existing Pi. This removes the main infrastructure uncertainty before altering ESP32 firmware. It does **not** authorize a test server or a public endpoint now.
+**Current next step:** The owner has authorized Checkpoint 1's isolated test. First run the read-only checks in `tests/README.md` on the Raspberry Pi and confirm no 8443 conflict; then follow the controlled test procedure. No permission to build/flash firmware or to modify House Audio is implied.
