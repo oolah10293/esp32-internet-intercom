@@ -7,8 +7,10 @@ Binds exclusively to 127.0.0.1:18765. Requires aiohttp.
 import asyncio
 import hmac
 import json
+import os
 import secrets
 import time
+from urllib.parse import quote, urlsplit
 
 from aiohttp import WSMsgType, web
 
@@ -31,9 +33,9 @@ HTML = r"""<!doctype html>
  .row {display:flex;gap:.5rem;flex-wrap:wrap}
 </style>
 <h2>Funnel / WebSocket intercom traffic test</h2>
-<p>This is an isolated test, not the intercom server. Enter the one-time token shown
-in the Pi terminal. Start the traffic test to send 640-byte frames every 20 ms
-and receive them back over the same encrypted connection.</p>
+<p>This is an isolated test, not the intercom server. Scan the QR code displayed
+by the Pi to connect automatically on your phone, or paste the one-time token below.
+The traffic test sends 640-byte frames every 20 ms and echoes them back.</p>
 <label for="token">One-time test token</label><br>
 <input id="token" type="password" autocomplete="off" placeholder="Token printed on Pi">
 <div class="row">
@@ -134,6 +136,14 @@ $("stop").onclick = () => {
 $("disconnect").onclick = () => { stopTraffic(); if (socket) socket.close(1000, "user"); };
 setInterval(report, 1000);
 controls(); report();
+// QR pairing URL: the fragment is never transmitted in an HTTP request.
+// Drop it from the address bar before authenticating via WSS.
+const scannedToken = new URLSearchParams(location.hash.substring(1)).get("token");
+if (scannedToken) {
+ $("token").value = scannedToken;
+ history.replaceState(null, "", location.pathname + location.search);
+ $("connect").click();
+}
 </script>
 </html>
 """
@@ -194,6 +204,31 @@ async def websocket_probe(request):
                   f"{time.monotonic()-started:.1f}s (code {ws.close_code}).", flush=True)
     return ws
 
+def print_phone_qr():
+    """Show a locally generated QR for the public Funnel URL and ephemeral secret."""
+    url = os.environ.get("FUNNEL_PUBLIC_URL", "").strip()
+    if not url:
+        print("Phone pairing QR: set FUNNEL_PUBLIC_URL to your HTTPS Funnel URL.")
+        return
+    parts = urlsplit(url)
+    if parts.scheme != "https" or not parts.netloc or parts.username or parts.password or parts.query or parts.fragment:
+        print("Phone QR unavailable: FUNNEL_PUBLIC_URL must be an HTTPS URL without query or fragment.")
+        return
+    try:
+        import qrcode
+    except ImportError:
+        print("Phone QR unavailable: install qrcode in the test virtual environment.")
+        return
+    pair_url = url.rstrip("/") + "/#token=" + quote(TOKEN, safe="")
+    qr = qrcode.QRCode(border=2, error_correction=qrcode.constants.ERROR_CORRECT_M)
+    qr.add_data(pair_url)
+    qr.make(fit=True)
+    print("\nScan the QR below with your phone camera (cellular data; Wi-Fi and Tailscale off).")
+    print("Do not post the QR as an image: it contains the temporary test credential.")
+    qr.print_ascii(invert=True)
+    print("The phone will connect automatically. Tap Start traffic on the phone.\n", flush=True)
+
+
 def main():
     app = web.Application(client_max_size=2048)
     app.router.add_get("/", index)
@@ -202,6 +237,7 @@ def main():
     print(f"Local URL: http://{HOST}:{PORT}/")
     print(f"One-time test token: {TOKEN}")
     print("Token changes on every server restart; do not put it in GitHub.")
+    print_phone_qr()
     print("Press Ctrl+C to stop this test service.", flush=True)
     web.run_app(app, host=HOST, port=PORT, print=None, access_log=None)
 
