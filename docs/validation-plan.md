@@ -1,6 +1,6 @@
 # Validation plan and progress checkpoints
 
-**Last updated:** 2026-11-14. **Project state:** research/design, no execution.
+**Last updated:** 2026-11-14. **Project state:** research/design with one owner-performed WebSocket/Funnel traffic test; no ESP32 firmware, intercom implementation or build.
 
 This is a record of **proposed tests**, not evidence that any have run. No test, implementation, firmware build, Pi configuration change, or deployment is authorized by this document alone.
 
@@ -39,7 +39,7 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 
 **Pass principle:** no human intervention needed for recovery, audio-sized traffic is sustained, and latency/reconnect observations are acceptable for a press-to-talk voice device. Numeric acceptable thresholds to be agreed after preliminary measurement.
 
-**Status:** LOCAL PROBE AND FUNNEL STARTUP OBSERVED VIA OWNER SCREENSHOT; EXTERNAL CONNECTION AND TRAFFIC NOT YET TESTED. The owner authorized the isolated Funnel/WebSocket test on 2026-11-14. Probe source at `tests/funnel_probe.py`; setup, security and cleanup instructions at `tests/README.md`. **Owner-supplied read-only Pi checks:** Tailscale 1.104.7 and Python 3.13.5; Serve uses 443 for a tailnet-only share; Pi-hole uses TCP 8443; no listener shown at TCP 10000 or 18765. Select **Funnel public HTTPS 10000**. No Pi access from assistant, service installation, public Funnel exposure, or external measurement has yet occurred.
+**Status:** FUNNEL WEBSOCKET ECHO TEST OBSERVED VIA OWNER SCREENSHOT; CROSS-ISP, LONG-IDLE AND RECOVERY TESTS STILL OPEN. The owner authorized the isolated Funnel/WebSocket test on 2026-11-14. Probe source at `tests/funnel_probe.py`; setup, security and cleanup instructions at `tests/README.md`. **Owner-supplied read-only Pi checks:** Tailscale 1.104.7 and Python 3.13.5; Serve uses 443 for a tailnet-only share; Pi-hole uses TCP 8443; no listener shown at TCP 10000 or 18765. Select **Funnel public HTTPS 10000**. No direct Pi access from assistant. Owner has started the local probe and public Funnel endpoint, and demonstrated a browser WebSocket traffic test. Browser ISP/path independence and unattended endurance are not yet verified.
 
 ### Checkpoint 2 — One-box local audio
 
@@ -97,7 +97,8 @@ This is a record of **proposed tests**, not evidence that any have run. No test,
 | 2026-11-14 | 0 | GitHub + documentation websites | Read sources and establish docs | **SOURCE REVIEW ONLY; NO TESTS** | `README.md`, `docs/architecture.md`, `docs/research-baseline.md` |
 | 2026-11-14 | 1 (preparation) | GitHub source only | Created isolated authenticated WSS echo harness and Pi runbook | **UNTESTED CODE; NOT DEPLOYED** | `tests/funnel_probe.py`, `tests/README.md` |
 | 2026-11-14 | 1 (read-only checks) | Owner-reported Raspberry Pi terminal output | Examined Tailscale, port listeners and Python version | **8443 IN USE BY PI-HOLE; 10000 NOT SHOWN IN LISTENERS; NO FUNNEL TEST YET** | Owner terminal output in project chat |
-| 2026-11-14 | 1 (startup) | Owner-provided two-terminal screenshot | Started isolated aiohttp probe on 127.0.0.1:18765 and foreground Tailscale Funnel on HTTPS 10000 | **LOCAL STARTUP AND FUNNEL PUBLIC URL ADVERTISED; NOT YET VERIFIED FROM OUTSIDE ISP OR WEBSOCKET DATA** | Screenshot in project chat; one-time token not reproduced |
+| 2026-11-14 | 1 (startup) | Owner-provided two-terminal screenshot | Started isolated aiohttp probe on 127.0.0.1:18765 and foreground Tailscale Funnel on HTTPS 10000 | **LOCAL STARTUP AND FUNNEL PUBLIC URL ADVERTISED** | Screenshot in project chat; one-time token not reproduced |
+| 2026-11-14 | 1 (WebSocket echo traffic) | Owner-provided browser screenshot of public Funnel test page on Windows PC | Sent 640-byte framed WebSocket traffic via advertised HTTPS 10000 endpoint and echoed back | **5,131 frames sent; 5,131 echoed; 0 skipped sends/backpressure; mean echo RTT 70.6 ms; ended with close code 1000.** This proves successful browser-to-Pi round trips for the observed session, **not** separate-household ISP operation, long-term reliability, or one-way voice latency. | Screenshot in project chat; test token omitted |
 
 For future entries, include: source commit SHA, test commands/configuration, equipment and board revision, network topology, reproducible measurements, screenshots or logs if available, success/failure and outstanding defects. Do not mark success based only on source inspection.
 
@@ -114,4 +115,4 @@ For future entries, include: source commit SHA, test commands/configuration, equ
 
 ## Next suggested step
 
-**Current next step:** The owner has authorized Checkpoint 1's isolated test. Read-only checks are supplied: 8443 is occupied by Pi-hole, so **use HTTPS 10000**, which had no listed listener. Next follow the isolated server and Funnel procedure in `tests/README.md`. No permission to build/flash firmware or to modify House Audio is implied.
+**Current next step:** Observed initial WSS echo data over public Funnel HTTPS 10000. Run a controlled test from a genuinely separate ISP and an extended idle/reconnect test before declaring Checkpoint 1 complete. Keep existing Pi-hole on 8443 and private Tailscale Serve on 443 untouched. No permission to build/flash firmware or modify House Audio is implied.
